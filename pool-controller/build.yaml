@@ -1,0 +1,8 @@
+build_from:
+  amd64: ghcr.io/home-assistant/amd64-base-debian:bookworm
+  aarch64: ghcr.io/home-assistant/aarch64-base-debian:bookworm
+labels:
+  org.opencontainers.image.title: "Home Assistant Add-on: Pool Controller"
+  org.opencontainers.image.description: "Pentair pool equipment controller with dashPanel UI"
+  org.opencontainers.image.source: "https://github.com/jrhubott/ha-pool-controller"
+  org.opencontainers.image.licenses: "MIT"

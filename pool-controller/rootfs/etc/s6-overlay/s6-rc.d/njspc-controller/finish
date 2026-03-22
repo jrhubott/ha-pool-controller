@@ -1,0 +1,5 @@
+#!/command/with-contenv bashio
+if [ "${1}" -ne 0 ] && [ "${1}" -ne 256 ]; then
+    bashio::log.warning "njspc-controller exited with code ${1}, restarting in 5s..."
+    sleep 5
+fi

@@ -1,0 +1,26 @@
+name: "Pool Controller"
+description: "Pentair pool equipment controller using nodejs-poolController with dashPanel UI"
+version: "1.0.0"
+slug: pool-controller
+url: "https://github.com/jrhubott/ha-pool-controller"
+arch:
+  - amd64
+  - aarch64
+init: false
+startup: services
+ingress: true
+ingress_port: 5150
+ingress_stream: true
+panel_icon: "mdi:pool"
+panel_title: "Pool"
+ports:
+  4200/tcp: 4200
+ports_description:
+  4200/tcp: "njspc REST API / Socket.IO"
+uart: true
+options:
+  serial_port: ""
+  log_level: "info"
+schema:
+  serial_port: device(subsystem=tty)
+  log_level: list(error|warn|info|debug|silly)

@@ -1,0 +1,4 @@
+#!/command/with-contenv bashio
+bashio::log.info "Starting nodejs-poolController..."
+cd /app/njspc || bashio::exit.nok "Could not change to /app/njspc"
+exec node dist/app.js
