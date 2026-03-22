@@ -1,3 +1,7 @@
+# BUILD_FROM must be declared globally (before any FROM) to be injectable
+# by the HA Supervisor build system
+ARG BUILD_FROM
+
 # =============================================================================
 # Stage 1: Build nodejs-poolController from source
 # =============================================================================
@@ -37,7 +41,6 @@ FROM ghcr.io/rstrouse/njspc-dash:latest AS dashpanel
 # =============================================================================
 # Stage 3: Final Home Assistant add-on image
 # =============================================================================
-ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
 # Install Node.js 20 from NodeSource and jq for config patching
