@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.8
+
+- Switch from addon_config map (not bind-mounted by this HA Supervisor version) to
+  share:rw map — configs now visible in file editor under /share/pool-controller/
+
 ## 1.0.7
 
 - Move config.json files to /addon_config/ (mapped to /addon_configs/pool-controller/

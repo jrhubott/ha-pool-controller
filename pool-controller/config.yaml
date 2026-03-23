@@ -1,6 +1,6 @@
 name: "Pool Controller"
 description: "Pentair pool equipment controller using nodejs-poolController with dashPanel UI"
-version: "1.0.7"
+version: "1.0.8"
 slug: pool-controller
 url: "https://github.com/jrhubott/ha-pool-controller"
 arch:
@@ -18,7 +18,7 @@ ports:
 ports_description:
   4200/tcp: "njspc REST API / Socket.IO"
 map:
-  - addon_config:rw
+  - share:rw
 uart: true
 options:
   serial_port: ""
