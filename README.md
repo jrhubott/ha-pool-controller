@@ -41,10 +41,11 @@ Save, then start the add-on. The **Pool** panel will appear in the HA sidebar.
 
 ## Building locally
 
+### Docker
+
 Requirements: Docker with BuildKit enabled.
 
 ```bash
-# From the pool-controller/ directory
 docker build \
   --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm \
   --build-arg NJSPC_VERSION=8.3.0 \
@@ -52,7 +53,24 @@ docker build \
   pool-controller/
 ```
 
+### Podman
+
+```bash
+podman build \
+  --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm \
+  --build-arg NJSPC_VERSION=8.3.0 \
+  -t pool-controller:local \
+  pool-controller/
+```
+
+Podman runs rootless by default. If the build fails pulling from `ghcr.io`, log in first:
+
+```bash
+podman login ghcr.io
+```
+
 To test a specific njspc version, change `NJSPC_VERSION` to the desired tag.
+For aarch64, replace `amd64` with `aarch64` in the `BUILD_FROM` value.
 
 ## Applying patches to nodejs-poolController
 
