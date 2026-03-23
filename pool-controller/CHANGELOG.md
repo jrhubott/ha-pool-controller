@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.4
+
+- Remove POOL_WEB_SERVICES_* env vars from dashPanel service; connection is
+  configured via config.json — env vars were causing "httplocalhost:" protocol error
+
 ## 1.0.3
 
 - Enable dashPanel proxy mode by default (web.services.useProxy = true) so the
