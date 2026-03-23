@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2
+
+- Create dashPanel outQueues directory and symlink to /app/dashpanel/data/outQueues/
+
 ## 1.0.1
 
 - Keep curl in final image so bashio can communicate with the HA Supervisor API

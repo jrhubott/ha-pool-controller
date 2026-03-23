@@ -13,7 +13,7 @@ bashio::log.info "Initialising nodejs-poolController..."
 # HA mounts /data as a volume at runtime so these won't exist from the image
 # ---------------------------------------------------------------------------
 mkdir -p /data/njspc/logs /data/njspc/backups
-mkdir -p /data/dashpanel/logs /data/dashpanel/backups
+mkdir -p /data/dashpanel/logs /data/dashpanel/backups /data/dashpanel/outQueues
 
 # ---------------------------------------------------------------------------
 # Read add-on options
@@ -77,5 +77,9 @@ fi
 if [ -d /app/dashpanel/logs ] || [ ! -L /app/dashpanel/logs ]; then
     rm -rf /app/dashpanel/logs && ln -sf /data/dashpanel/logs /app/dashpanel/logs
 fi
+
+# dashPanel looks for outQueues under its data/ subdirectory
+mkdir -p /app/dashpanel/data
+ln -sf /data/dashpanel/outQueues /app/dashpanel/data/outQueues
 
 bashio::log.info "Initialisation complete."
