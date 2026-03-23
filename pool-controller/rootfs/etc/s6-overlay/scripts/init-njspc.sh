@@ -36,6 +36,14 @@ bashio::log.info "MQTT enabled: ${MQTT_ENABLED}"
 # ---------------------------------------------------------------------------
 # njspc: config stored in /share/pool-controller/njspc/ (visible in HA file editor)
 # ---------------------------------------------------------------------------
+# njspc saves config via atomic write (temp file + rename), which replaces our
+# symlink at /app/njspc/config.json with a real file. Sync it back to /share
+# before patching so user-saved settings (alias, owner, location, etc.) survive restarts.
+if [ -f /app/njspc/config.json ] && [ ! -L /app/njspc/config.json ]; then
+    bashio::log.info "Syncing njspc config from /app back to /share (atomic-write detected)"
+    cp /app/njspc/config.json /share/pool-controller/njspc/config.json
+fi
+
 if [ ! -f /share/pool-controller/njspc/config.json ]; then
     bashio::log.info "Creating default njspc config in /share/pool-controller/njspc/config.json"
     cp /app/njspc/defaultConfig.json /share/pool-controller/njspc/config.json

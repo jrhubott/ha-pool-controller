@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.12
+
+- Fix njspc config settings (alias, owner, location, etc.) being lost on restart
+- njspc saves config via atomic write (temp+rename), which replaced the symlink at
+  /app/njspc/config.json with a real file; init script now detects this and syncs
+  the file back to /share before patching, preserving all user-saved settings
+
 ## 1.0.11
 
 - Add NJSPC_REF and DASHPANEL_TAG build args to control upstream versions
