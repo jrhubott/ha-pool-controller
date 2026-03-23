@@ -48,7 +48,8 @@ Requirements: Docker with BuildKit enabled.
 ```bash
 docker build \
   --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm \
-  --build-arg NJSPC_VERSION=8.3.0 \
+  --build-arg NJSPC_REF=v8.4.0 \
+  --build-arg DASHPANEL_TAG=latest \
   -t pool-controller:local \
   pool-controller/
 ```
@@ -61,7 +62,8 @@ Match the `BUILD_FROM` image to your host architecture:
 ```bash
 podman build \
   --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm \
-  --build-arg NJSPC_VERSION=8.3.0 \
+  --build-arg NJSPC_REF=v8.4.0 \
+  --build-arg DASHPANEL_TAG=latest \
   -t pool-controller:local \
   pool-controller/
 ```
@@ -70,7 +72,8 @@ podman build \
 ```bash
 podman build \
   --build-arg BUILD_FROM=ghcr.io/home-assistant/aarch64-base-debian:bookworm \
-  --build-arg NJSPC_VERSION=8.3.0 \
+  --build-arg NJSPC_REF=v8.4.0 \
+  --build-arg DASHPANEL_TAG=latest \
   -t pool-controller:local \
   pool-controller/
 ```
@@ -80,7 +83,8 @@ podman build \
 podman build \
   --platform linux/amd64 \
   --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm \
-  --build-arg NJSPC_VERSION=8.3.0 \
+  --build-arg NJSPC_REF=v8.4.0 \
+  --build-arg DASHPANEL_TAG=latest \
   -t pool-controller:local \
   pool-controller/
 ```
@@ -91,7 +95,38 @@ Podman runs rootless by default. If the build fails pulling from `ghcr.io`, log 
 podman login ghcr.io
 ```
 
-To test a specific njspc version, change `NJSPC_VERSION` to the desired tag.
+To pin a specific njspc version or branch, pass `--build-arg NJSPC_REF=v8.3.0` or `--build-arg NJSPC_REF=main`.
+To pin a dashPanel image tag, pass `--build-arg DASHPANEL_TAG=master` (available: `latest`, `master`, `sha-*`).
+
+## Releasing a new version
+
+When upstream components release new versions, update the following files:
+
+### nodejs-poolController update
+
+1. **`pool-controller/Dockerfile`** — update the `NJSPC_REF` default:
+   ```dockerfile
+   ARG NJSPC_REF=v8.5.0
+   ```
+2. Verify any existing patches in `pool-controller/patches/` still apply cleanly against the new version.
+
+### dashPanel update
+
+If a specific `sha-*` tag is preferred over `latest`:
+
+1. **`pool-controller/Dockerfile`** — update the `DASHPANEL_TAG` default:
+   ```dockerfile
+   ARG DASHPANEL_TAG=sha-abc1234
+   ```
+
+### Add-on version bump
+
+After any upstream update, bump the add-on version in **`pool-controller/config.yaml`**:
+```yaml
+version: "1.0.11"
+```
+
+Add an entry to **`pool-controller/CHANGELOG.md`** describing what changed.
 
 ## Applying patches to nodejs-poolController
 

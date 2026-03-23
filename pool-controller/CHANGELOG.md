@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.11
+
+- Add NJSPC_REF and DASHPANEL_TAG build args to control upstream versions
+- NJSPC_REF accepts any git tag (e.g. v8.4.0) or branch (e.g. main); defaults to v8.4.0
+- DASHPANEL_TAG accepts any ghcr.io/rstrouse/njspc-dash image tag; defaults to latest
+
 ## 1.0.8
 
 - Switch from addon_config map (not bind-mounted by this HA Supervisor version) to

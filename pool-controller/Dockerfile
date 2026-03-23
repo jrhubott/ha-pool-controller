@@ -1,6 +1,7 @@
 # BUILD_FROM must be declared globally (before any FROM) to be injectable
 # by the HA Supervisor build system
 ARG BUILD_FROM
+ARG DASHPANEL_TAG=latest
 
 # =============================================================================
 # Stage 1: Build nodejs-poolController from source
@@ -17,9 +18,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /build
 
-# Clone the controller repo at a pinned version
-ARG NJSPC_VERSION=8.3.0
-RUN git clone --depth 1 --branch "v${NJSPC_VERSION}" \
+# Clone the controller repo at a pinned version (tag like v8.4.0 or branch like main)
+ARG NJSPC_REF=v8.4.0
+RUN git clone --depth 1 --branch "${NJSPC_REF}" \
     https://github.com/tagyoureit/nodejs-poolController.git .
 
 # Apply any patches from the patches/ directory
@@ -42,7 +43,7 @@ RUN npm ci && npm run build && npm prune --production
 # =============================================================================
 # Stage 2: Reference dashPanel pre-built image (used only as a COPY source)
 # =============================================================================
-FROM ghcr.io/rstrouse/njspc-dash:latest AS dashpanel
+FROM ghcr.io/rstrouse/njspc-dash:${DASHPANEL_TAG} AS dashpanel
 
 # =============================================================================
 # Stage 3: Final Home Assistant add-on image

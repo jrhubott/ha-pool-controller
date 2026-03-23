@@ -12,14 +12,16 @@ A Home Assistant add-on repository that packages [nodejs-poolController](https:/
 # Build for amd64 (local dev/testing)
 docker build \
   --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm \
-  --build-arg NJSPC_VERSION=8.3.0 \
+  --build-arg NJSPC_REF=v8.4.0 \
+  --build-arg DASHPANEL_TAG=latest \
   -t pool-controller:local \
   pool-controller/
 
 # Build for aarch64
 docker build \
   --build-arg BUILD_FROM=ghcr.io/home-assistant/aarch64-base-debian:bookworm \
-  --build-arg NJSPC_VERSION=8.3.0 \
+  --build-arg NJSPC_REF=v8.4.0 \
+  --build-arg DASHPANEL_TAG=latest \
   -t pool-controller:local-arm \
   pool-controller/
 ```
@@ -40,8 +42,8 @@ The dashPanel is the ingress entry point (HA sidebar, port 5150). The controller
 
 ### Dockerfile: 3-stage build
 
-1. **controller-build** (`node:20-bookworm-slim`): clones njspc at `NJSPC_VERSION`, applies any `.patch` files from `patches/`, runs `npm ci && npm run build && npm prune --production`
-2. **dashpanel** (`ghcr.io/rstrouse/njspc-dash:latest`): referenced only as a `COPY --from` source
+1. **controller-build** (`node:20-bookworm-slim`): clones njspc at `NJSPC_REF` (git tag or branch), applies any `.patch` files from `patches/`, runs `npm ci && npm run build && npm prune --production`
+2. **dashpanel** (`ghcr.io/rstrouse/njspc-dash:${DASHPANEL_TAG}`): referenced only as a `COPY --from` source
 3. **Final** (`$BUILD_FROM` = HA Debian base): installs Node.js 20 + jq, copies built artifacts from both prior stages, copies `rootfs/` into the container filesystem
 
 ### Configuration flow
