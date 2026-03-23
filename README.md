@@ -55,8 +55,30 @@ docker build \
 
 ### Podman
 
+Match the `BUILD_FROM` image to your host architecture:
+
+**x86-64 host:**
 ```bash
 podman build \
+  --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm \
+  --build-arg NJSPC_VERSION=8.3.0 \
+  -t pool-controller:local \
+  pool-controller/
+```
+
+**ARM64 host (Apple Silicon, Raspberry Pi 4/5):**
+```bash
+podman build \
+  --build-arg BUILD_FROM=ghcr.io/home-assistant/aarch64-base-debian:bookworm \
+  --build-arg NJSPC_VERSION=8.3.0 \
+  -t pool-controller:local \
+  pool-controller/
+```
+
+**Cross-architecture build** (e.g. building amd64 on an ARM host — requires QEMU/binfmt):
+```bash
+podman build \
+  --platform linux/amd64 \
   --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm \
   --build-arg NJSPC_VERSION=8.3.0 \
   -t pool-controller:local \
@@ -70,7 +92,6 @@ podman login ghcr.io
 ```
 
 To test a specific njspc version, change `NJSPC_VERSION` to the desired tag.
-For aarch64, replace `amd64` with `aarch64` in the `BUILD_FROM` value.
 
 ## Applying patches to nodejs-poolController
 
