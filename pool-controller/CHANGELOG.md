@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.13
+
+- Fix pool configuration (alias, owner, location, circuits, pumps, schedules) lost on restart
+- njspc stores pool/equipment config in data/poolConfig.json, not config.json; symlink
+  /app/njspc/data/ to /data/njspc/data/ so all pool config survives restarts and updates
+
 ## 1.0.12
 
 - Fix njspc config settings (alias, owner, location, etc.) being lost on restart

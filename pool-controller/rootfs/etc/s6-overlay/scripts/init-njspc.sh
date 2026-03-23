@@ -15,7 +15,7 @@ bashio::log.info "Initialising nodejs-poolController..."
 # /data is private add-on storage — used for logs, backups, runtime data.
 # ---------------------------------------------------------------------------
 mkdir -p /share/pool-controller/njspc /share/pool-controller/dashpanel
-mkdir -p /data/njspc/logs /data/njspc/backups
+mkdir -p /data/njspc/data /data/njspc/logs /data/njspc/backups
 mkdir -p /data/dashpanel/logs /data/dashpanel/backups /data/dashpanel/outQueues
 
 # ---------------------------------------------------------------------------
@@ -36,14 +36,6 @@ bashio::log.info "MQTT enabled: ${MQTT_ENABLED}"
 # ---------------------------------------------------------------------------
 # njspc: config stored in /share/pool-controller/njspc/ (visible in HA file editor)
 # ---------------------------------------------------------------------------
-# njspc saves config via atomic write (temp file + rename), which replaces our
-# symlink at /app/njspc/config.json with a real file. Sync it back to /share
-# before patching so user-saved settings (alias, owner, location, etc.) survive restarts.
-if [ -f /app/njspc/config.json ] && [ ! -L /app/njspc/config.json ]; then
-    bashio::log.info "Syncing njspc config from /app back to /share (atomic-write detected)"
-    cp /app/njspc/config.json /share/pool-controller/njspc/config.json
-fi
-
 if [ ! -f /share/pool-controller/njspc/config.json ]; then
     bashio::log.info "Creating default njspc config in /share/pool-controller/njspc/config.json"
     cp /app/njspc/defaultConfig.json /share/pool-controller/njspc/config.json
@@ -97,6 +89,7 @@ bashio::log.info "MQTT config applied (web.interfaces.mqtt)"
 
 # Symlink config and runtime dirs into the app directory
 ln -sf /share/pool-controller/njspc/config.json /app/njspc/config.json
+rm -rf /app/njspc/data && ln -sf /data/njspc/data /app/njspc/data
 rm -rf /app/njspc/logs && ln -sf /data/njspc/logs /app/njspc/logs
 rm -rf /app/njspc/backups && ln -sf /data/njspc/backups /app/njspc/backups
 
