@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1
+
+- Keep curl in final image so bashio can communicate with the HA Supervisor API
+- Create /data/ subdirectories in init script (HA volume mount hides Dockerfile-created dirs)
+
 ## 1.0.0
 
 - Initial release
