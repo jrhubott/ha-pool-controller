@@ -1,6 +1,6 @@
 name: "Pool Controller"
 description: "Pentair pool equipment controller using nodejs-poolController with dashPanel UI"
-version: "1.0.9"
+version: "1.0.10"
 slug: pool-controller
 url: "https://github.com/jrhubott/ha-pool-controller"
 arch:

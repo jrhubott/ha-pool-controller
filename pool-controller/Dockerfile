@@ -24,9 +24,14 @@ RUN git clone --depth 1 --branch "v${NJSPC_VERSION}" \
 
 # Apply any patches from the patches/ directory
 COPY patches/ /tmp/patches/
-RUN if ls /tmp/patches/*.patch 1>/dev/null 2>&1; then \
+RUN set -e; \
+    patches=$(find /tmp/patches -maxdepth 1 -name '*.patch' | sort); \
+    if [ -n "${patches}" ]; then \
+      echo "Verifying patches apply cleanly..." && \
+      echo "${patches}" | xargs git apply --check && \
       echo "Applying patches..." && \
-      git apply /tmp/patches/*.patch; \
+      echo "${patches}" | xargs git apply && \
+      echo "All patches applied successfully."; \
     else \
       echo "No patches to apply."; \
     fi
