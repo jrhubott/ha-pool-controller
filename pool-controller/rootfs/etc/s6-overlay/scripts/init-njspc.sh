@@ -18,6 +18,14 @@ mkdir -p /addon_config/njspc /addon_config/dashpanel
 mkdir -p /data/njspc/logs /data/njspc/backups
 mkdir -p /data/dashpanel/logs /data/dashpanel/backups /data/dashpanel/outQueues
 
+# Debug: verify /addon_config/ mount
+if mountpoint -q /addon_config; then
+    bashio::log.info "DEBUG: /addon_config is a real mount point"
+else
+    bashio::log.warning "DEBUG: /addon_config is NOT a mount point -- files will not persist to host"
+fi
+bashio::log.info "DEBUG: /addon_config contents: $(ls -la /addon_config/)"
+
 # ---------------------------------------------------------------------------
 # Read add-on options
 # ---------------------------------------------------------------------------
