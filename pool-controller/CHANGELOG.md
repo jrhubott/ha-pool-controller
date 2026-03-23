@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3
+
+- Enable dashPanel proxy mode by default (web.services.useProxy = true) so the
+  browser connects to njsPC via the dashPanel server when running behind HA ingress
+
 ## 1.0.2
 
 - Create dashPanel outQueues directory and symlink to /app/dashpanel/data/outQueues/

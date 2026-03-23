@@ -71,6 +71,12 @@ if [ -f /app/dashpanel/defaultConfig.json ] && [ ! -f /data/dashpanel/config.jso
 fi
 
 if [ -f /data/dashpanel/config.json ]; then
+    # Enable proxy so the browser connects to njsPC via the dashPanel server
+    # (required when running behind HA ingress — 127.0.0.1:4200 is not
+    # reachable directly from the user's browser)
+    tmp=$(mktemp)
+    jq '.web.services.useProxy = true' \
+        /data/dashpanel/config.json > "${tmp}" && mv "${tmp}" /data/dashpanel/config.json
     ln -sf /data/dashpanel/config.json /app/dashpanel/config.json
 fi
 
