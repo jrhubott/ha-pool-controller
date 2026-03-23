@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.7
+
+- Move config.json files to /addon_config/ (mapped to /addon_configs/pool-controller/
+  on the host) so they are accessible via the HA file editor
+- Logs and backups remain in /data/ (private add-on storage)
+
 ## 1.0.6
 
 - Add MQTT options to add-on config: mqtt_enabled, mqtt_host, mqtt_port,

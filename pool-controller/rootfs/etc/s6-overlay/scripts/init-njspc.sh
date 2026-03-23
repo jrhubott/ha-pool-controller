@@ -9,9 +9,12 @@
 bashio::log.info "Initialising nodejs-poolController..."
 
 # ---------------------------------------------------------------------------
-# Ensure persistent data directories exist
-# HA mounts /data as a volume at runtime so these won't exist from the image
+# Ensure directories exist
+# /addon_config is mounted from /addon_configs/<slug>/ on the host — accessible
+# via the HA file editor. Used for config.json files users may want to edit.
+# /data is private add-on storage — used for logs, backups, runtime data.
 # ---------------------------------------------------------------------------
+mkdir -p /addon_config/njspc /addon_config/dashpanel
 mkdir -p /data/njspc/logs /data/njspc/backups
 mkdir -p /data/dashpanel/logs /data/dashpanel/backups /data/dashpanel/outQueues
 
@@ -31,11 +34,11 @@ bashio::log.info "Log level:    ${LOG_LEVEL}"
 bashio::log.info "MQTT enabled: ${MQTT_ENABLED}"
 
 # ---------------------------------------------------------------------------
-# njspc: initialise persistent config in /data/njspc/
+# njspc: config stored in /addon_config/njspc/ (visible in HA file editor)
 # ---------------------------------------------------------------------------
-if [ ! -f /data/njspc/config.json ]; then
-    bashio::log.info "Creating default njspc config in /data/njspc/config.json"
-    cp /app/njspc/defaultConfig.json /data/njspc/config.json
+if [ ! -f /addon_config/njspc/config.json ]; then
+    bashio::log.info "Creating default njspc config in /addon_config/njspc/config.json"
+    cp /app/njspc/defaultConfig.json /addon_config/njspc/config.json
 fi
 
 # Patch serial port into config (always, to catch UI config changes)
@@ -43,7 +46,7 @@ if [ -n "${SERIAL_PORT}" ]; then
     tmp=$(mktemp)
     jq --arg port "${SERIAL_PORT}" \
         '.controller.comms.rs485Port = $port' \
-        /data/njspc/config.json > "${tmp}" && mv "${tmp}" /data/njspc/config.json
+        /addon_config/njspc/config.json > "${tmp}" && mv "${tmp}" /addon_config/njspc/config.json
     bashio::log.info "Set njspc serial port to ${SERIAL_PORT}"
 fi
 
@@ -52,14 +55,14 @@ if [ -n "${LOG_LEVEL}" ]; then
     tmp=$(mktemp)
     jq --arg level "${LOG_LEVEL}" \
         '.log.app = $level' \
-        /data/njspc/config.json > "${tmp}" && mv "${tmp}" /data/njspc/config.json
+        /addon_config/njspc/config.json > "${tmp}" && mv "${tmp}" /addon_config/njspc/config.json
     bashio::log.info "Set njspc log level to ${LOG_LEVEL}"
 fi
 
 # Ensure the web server binds on all interfaces at port 4200
 tmp=$(mktemp)
 jq '.web.servers.http.ip = "0.0.0.0" | .web.servers.http.port = 4200' \
-    /data/njspc/config.json > "${tmp}" && mv "${tmp}" /data/njspc/config.json
+    /addon_config/njspc/config.json > "${tmp}" && mv "${tmp}" /addon_config/njspc/config.json
 
 # ---------------------------------------------------------------------------
 # MQTT configuration
@@ -75,25 +78,23 @@ jq --argjson enabled "${MQTT_ENABLED}" \
    | .mqtt.options.port = $port
    | .mqtt.options.username = $username
    | .mqtt.options.password = $password' \
-    /data/njspc/config.json > "${tmp}" && mv "${tmp}" /data/njspc/config.json
+    /addon_config/njspc/config.json > "${tmp}" && mv "${tmp}" /addon_config/njspc/config.json
 bashio::log.info "MQTT config applied"
 
-# Symlink persistent config into the app directory
-ln -sf /data/njspc/config.json /app/njspc/config.json
-
-# Symlink log and backup directories
+# Symlink config and runtime dirs into the app directory
+ln -sf /addon_config/njspc/config.json /app/njspc/config.json
 rm -rf /app/njspc/logs && ln -sf /data/njspc/logs /app/njspc/logs
 rm -rf /app/njspc/backups && ln -sf /data/njspc/backups /app/njspc/backups
 
 # ---------------------------------------------------------------------------
-# dashPanel: initialise persistent config in /data/dashpanel/
+# dashPanel: config stored in /addon_config/dashpanel/ (visible in HA file editor)
 # ---------------------------------------------------------------------------
-if [ -f /app/dashpanel/defaultConfig.json ] && [ ! -f /data/dashpanel/config.json ]; then
-    bashio::log.info "Creating default dashPanel config in /data/dashpanel/config.json"
-    cp /app/dashpanel/defaultConfig.json /data/dashpanel/config.json
+if [ -f /app/dashpanel/defaultConfig.json ] && [ ! -f /addon_config/dashpanel/config.json ]; then
+    bashio::log.info "Creating default dashPanel config in /addon_config/dashpanel/config.json"
+    cp /app/dashpanel/defaultConfig.json /addon_config/dashpanel/config.json
 fi
 
-if [ -f /data/dashpanel/config.json ]; then
+if [ -f /addon_config/dashpanel/config.json ]; then
     # Enforce correct controller connection settings on every start.
     # The controller hostname is the add-on's Docker hostname (e.g. 71a43e53-pool-controller),
     # which is unique per HA installation — read dynamically via $(hostname).
@@ -107,13 +108,11 @@ if [ -f /data/dashpanel/config.json ]; then
        | .web.services.protocol = "http://"
        | .web.services.ip = $host
        | .web.services.port = 4200' \
-        /data/dashpanel/config.json > "${tmp}" && mv "${tmp}" /data/dashpanel/config.json
-    ln -sf /data/dashpanel/config.json /app/dashpanel/config.json
+        /addon_config/dashpanel/config.json > "${tmp}" && mv "${tmp}" /addon_config/dashpanel/config.json
+    ln -sf /addon_config/dashpanel/config.json /app/dashpanel/config.json
 fi
 
-if [ -d /app/dashpanel/logs ] || [ ! -L /app/dashpanel/logs ]; then
-    rm -rf /app/dashpanel/logs && ln -sf /data/dashpanel/logs /app/dashpanel/logs
-fi
+rm -rf /app/dashpanel/logs && ln -sf /data/dashpanel/logs /app/dashpanel/logs
 
 # dashPanel looks for outQueues under its data/ subdirectory
 mkdir -p /app/dashpanel/data
