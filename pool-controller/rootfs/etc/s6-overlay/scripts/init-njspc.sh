@@ -66,6 +66,9 @@ jq '.web.servers.http.ip = "0.0.0.0" | .web.servers.http.port = 4200' \
 
 # ---------------------------------------------------------------------------
 # MQTT configuration
+# njspc reads interfaces from web.interfaces.<key> where the entry has
+# type="mqtt", a fileName pointing to the bindings file, and options for
+# the broker connection.  A top-level "mqtt" key is never read by njspc.
 # ---------------------------------------------------------------------------
 tmp=$(mktemp)
 jq --argjson enabled "${MQTT_ENABLED}" \
@@ -73,13 +76,16 @@ jq --argjson enabled "${MQTT_ENABLED}" \
     --argjson port "${MQTT_PORT}" \
     --arg username "${MQTT_USERNAME}" \
     --arg password "${MQTT_PASSWORD}" \
-    '.mqtt.enabled = $enabled
-   | .mqtt.options.host = $host
-   | .mqtt.options.port = $port
-   | .mqtt.options.username = $username
-   | .mqtt.options.password = $password' \
+    '.web.interfaces.mqtt.enabled = $enabled
+   | .web.interfaces.mqtt.type = "mqtt"
+   | .web.interfaces.mqtt.name = "MQTT"
+   | .web.interfaces.mqtt.fileName = "mqtt.json"
+   | .web.interfaces.mqtt.options.host = $host
+   | .web.interfaces.mqtt.options.port = $port
+   | .web.interfaces.mqtt.options.username = $username
+   | .web.interfaces.mqtt.options.password = $password' \
     /share/pool-controller/njspc/config.json > "${tmp}" && mv "${tmp}" /share/pool-controller/njspc/config.json
-bashio::log.info "MQTT config applied"
+bashio::log.info "MQTT config applied (web.interfaces.mqtt)"
 
 # Symlink config and runtime dirs into the app directory
 ln -sf /share/pool-controller/njspc/config.json /app/njspc/config.json
