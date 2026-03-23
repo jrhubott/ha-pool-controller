@@ -8,6 +8,7 @@ ARG BUILD_FROM
 FROM node:20-bookworm-slim AS controller-build
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
     git \
     python3 \
     make \
