@@ -71,11 +71,19 @@ if [ -f /app/dashpanel/defaultConfig.json ] && [ ! -f /data/dashpanel/config.jso
 fi
 
 if [ -f /data/dashpanel/config.json ]; then
-    # Enable proxy so the browser connects to njsPC via the dashPanel server
-    # (required when running behind HA ingress — 127.0.0.1:4200 is not
-    # reachable directly from the user's browser)
+    # Enforce correct controller connection settings on every start.
+    # The controller hostname is the add-on's Docker hostname (e.g. 71a43e53-pool-controller),
+    # which is unique per HA installation — read dynamically via $(hostname).
+    # useProxy=true routes the connection through the dashPanel server rather than
+    # the browser, which is required behind HA ingress.
+    ADDON_HOSTNAME=$(hostname)
+    bashio::log.info "Setting dashPanel controller host to ${ADDON_HOSTNAME}:4200"
     tmp=$(mktemp)
-    jq '.web.services.useProxy = true' \
+    jq --arg host "${ADDON_HOSTNAME}" \
+        '.web.services.useProxy = true
+       | .web.services.protocol = "http://"
+       | .web.services.ip = $host
+       | .web.services.port = 4200' \
         /data/dashpanel/config.json > "${tmp}" && mv "${tmp}" /data/dashpanel/config.json
     ln -sf /data/dashpanel/config.json /app/dashpanel/config.json
 fi

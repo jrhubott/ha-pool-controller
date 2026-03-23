@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.5
+
+- Fix dashPanel "httplocalhost:" error on restart: set protocol="http://", ip=$(hostname),
+  port=4200, useProxy=true in config on every start. The add-on hostname (e.g.
+  71a43e53-pool-controller) is read dynamically so it works on any HA installation.
+
 ## 1.0.4
 
 - Remove POOL_WEB_SERVICES_* env vars from dashPanel service; connection is
