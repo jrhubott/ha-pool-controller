@@ -44,14 +44,14 @@ FROM ghcr.io/rstrouse/njspc-dash:latest AS dashpanel
 # =============================================================================
 FROM ${BUILD_FROM}
 
-# Install Node.js 20 from NodeSource and jq for config patching
+# Install Node.js 20 from NodeSource and runtime dependencies.
+# curl must be kept — bashio uses it to call the HA Supervisor API.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     jq \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
-    && apt-get purge -y curl \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
@@ -65,10 +65,8 @@ COPY --from=controller-build /build/web /app/njspc/web
 # Copy dashPanel from Stage 2
 COPY --from=dashpanel /app /app/dashpanel
 
-# Create runtime directories (persistent data goes under /data, symlinked at startup)
+# Create app-level directories (not /data — HA mounts that as a volume at runtime)
 RUN mkdir -p \
-    /data/njspc \
-    /data/dashpanel \
     /app/njspc/logs \
     /app/njspc/backups \
     /app/dashpanel/logs \

@@ -9,6 +9,13 @@
 bashio::log.info "Initialising nodejs-poolController..."
 
 # ---------------------------------------------------------------------------
+# Ensure persistent data directories exist
+# HA mounts /data as a volume at runtime so these won't exist from the image
+# ---------------------------------------------------------------------------
+mkdir -p /data/njspc/logs /data/njspc/backups
+mkdir -p /data/dashpanel/logs /data/dashpanel/backups
+
+# ---------------------------------------------------------------------------
 # Read add-on options
 # ---------------------------------------------------------------------------
 SERIAL_PORT=$(bashio::config 'serial_port')
