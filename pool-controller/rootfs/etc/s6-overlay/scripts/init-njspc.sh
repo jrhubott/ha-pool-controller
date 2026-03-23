@@ -20,9 +20,15 @@ mkdir -p /data/dashpanel/logs /data/dashpanel/backups /data/dashpanel/outQueues
 # ---------------------------------------------------------------------------
 SERIAL_PORT=$(bashio::config 'serial_port')
 LOG_LEVEL=$(bashio::config 'log_level')
+MQTT_ENABLED=$(bashio::config 'mqtt_enabled')
+MQTT_HOST=$(bashio::config 'mqtt_host')
+MQTT_PORT=$(bashio::config 'mqtt_port')
+MQTT_USERNAME=$(bashio::config 'mqtt_username')
+MQTT_PASSWORD=$(bashio::config 'mqtt_password')
 
-bashio::log.info "Serial port: ${SERIAL_PORT}"
-bashio::log.info "Log level:   ${LOG_LEVEL}"
+bashio::log.info "Serial port:  ${SERIAL_PORT}"
+bashio::log.info "Log level:    ${LOG_LEVEL}"
+bashio::log.info "MQTT enabled: ${MQTT_ENABLED}"
 
 # ---------------------------------------------------------------------------
 # njspc: initialise persistent config in /data/njspc/
@@ -54,6 +60,23 @@ fi
 tmp=$(mktemp)
 jq '.web.servers.http.ip = "0.0.0.0" | .web.servers.http.port = 4200' \
     /data/njspc/config.json > "${tmp}" && mv "${tmp}" /data/njspc/config.json
+
+# ---------------------------------------------------------------------------
+# MQTT configuration
+# ---------------------------------------------------------------------------
+tmp=$(mktemp)
+jq --argjson enabled "${MQTT_ENABLED}" \
+    --arg host "${MQTT_HOST}" \
+    --argjson port "${MQTT_PORT}" \
+    --arg username "${MQTT_USERNAME}" \
+    --arg password "${MQTT_PASSWORD}" \
+    '.mqtt.enabled = $enabled
+   | .mqtt.options.host = $host
+   | .mqtt.options.port = $port
+   | .mqtt.options.username = $username
+   | .mqtt.options.password = $password' \
+    /data/njspc/config.json > "${tmp}" && mv "${tmp}" /data/njspc/config.json
+bashio::log.info "MQTT config applied"
 
 # Symlink persistent config into the app directory
 ln -sf /data/njspc/config.json /app/njspc/config.json

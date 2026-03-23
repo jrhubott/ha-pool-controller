@@ -9,3 +9,24 @@ configuration:
     description: >-
       Verbosity of the nodejs-poolController log output. Use "info" for normal
       operation; "debug" or "silly" for troubleshooting.
+  mqtt_enabled:
+    name: Enable MQTT
+    description: >-
+      Enable MQTT integration to publish pool state to your MQTT broker.
+  mqtt_host:
+    name: MQTT Broker Host
+    description: >-
+      Hostname or IP address of your MQTT broker (e.g., 192.168.1.10 or
+      homeassistant.local).
+  mqtt_port:
+    name: MQTT Broker Port
+    description: >-
+      Port of your MQTT broker. Default is 1883.
+  mqtt_username:
+    name: MQTT Username
+    description: >-
+      Username for authenticating with the MQTT broker. Leave blank if not required.
+  mqtt_password:
+    name: MQTT Password
+    description: >-
+      Password for authenticating with the MQTT broker. Leave blank if not required.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.6
+
+- Add MQTT options to add-on config: mqtt_enabled, mqtt_host, mqtt_port,
+  mqtt_username, mqtt_password (password type, masked in UI)
+- Init script patches all MQTT settings into njspc config.json on every start
+
 ## 1.0.5
 
 - Fix dashPanel "httplocalhost:" error on restart: set protocol="http://", ip=$(hostname),
