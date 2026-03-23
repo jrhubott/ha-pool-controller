@@ -1,0 +1,21 @@
+diff --git a/web/bindings/mqtt.json b/web/bindings/mqtt.json
+index dbf5f10..cc692af 100644
+--- a/web/bindings/mqtt.json
++++ b/web/bindings/mqtt.json
+@@ -185,8 +185,7 @@
+         {
+           "topic": "state/temps/solar",
+           "message": "{\"temp\":@bind=data.solar;}",
+-          "description": "Send solar temp.",
+-          "filter": "@bind=typeof data.solar !== 'undefined';"
++          "description": "Send solar temp."
+         },
+         {
+           "topic": "state/temps/solarSensor2",
+@@ -719,4 +718,4 @@
+       "enabled": false
+     }
+   ]
+-}
+\ No newline at end of file
++}
