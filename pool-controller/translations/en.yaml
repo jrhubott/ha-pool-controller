@@ -30,9 +30,3 @@ configuration:
     name: MQTT Password
     description: >-
       Password for authenticating with the MQTT broker. Leave blank if not required.
-  always_report_solar_temp:
-    name: Always Report Solar Temperature
-    description: >-
-      When enabled, solar panel temperature is always published to MQTT even when
-      the pumps are not running. Enables automations that start pumps based on the
-      temperature difference between the solar panel and pool water.

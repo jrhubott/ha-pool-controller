@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.24
+
+- Remove always_report_solar_temp option: investigation confirmed data.solar is
+  never undefined on systems with a solar heater configured, so the upstream MQTT
+  filter does not suppress solar temp reporting in normal use
+
 ## 1.0.23
 
 - Fix mqtt.json solar temp patch: add select(type == "object") to skip string

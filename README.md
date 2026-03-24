@@ -37,7 +37,6 @@ After installation, open the add-on's **Configuration** tab:
 | Serial Port | Select the RS-485 adapter device (e.g. `/dev/ttyUSB0`) |
 | Log Level | Verbosity: `error` / `warn` / `info` / `debug` / `silly` |
 | MQTT | Enable/disable MQTT integration and configure broker connection |
-| Always Report Solar Temp | Publish solar temperature via MQTT even when pumps are off (default: on) |
 
 ### Network configuration
 

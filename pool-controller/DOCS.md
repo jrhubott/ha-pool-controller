@@ -34,7 +34,6 @@ To publish pool state to an MQTT broker, enable MQTT and provide the broker conn
 
 | Option | Description |
 |--------|-------------|
-| `always_report_solar_temp` | Publish solar temperature via MQTT even when pumps are off (default: enabled) |
 | `mqtt_enabled` | Enable or disable MQTT publishing |
 | `mqtt_host` | Broker hostname or IP address |
 | `mqtt_port` | Broker port (default: 1883) |
@@ -85,11 +84,4 @@ Home Assistant file editor:
 
 Logs and backups are stored in private add-on storage (`/data/`) and persist across restarts.
 
-### Always Report Solar Temperature
-
-When enabled (default), solar panel temperature is published to MQTT continuously — even
-when the pumps are not running. This is needed for automations that compare solar panel
-temperature to pool water temperature and start the pumps when solar heating is available.
-
-When disabled, solar temperature is only published while the pumps are active (upstream default).
 

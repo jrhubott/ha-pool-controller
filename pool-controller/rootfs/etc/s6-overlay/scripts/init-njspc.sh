@@ -28,38 +28,9 @@ MQTT_HOST=$(bashio::config 'mqtt_host')
 MQTT_PORT=$(bashio::config 'mqtt_port')
 MQTT_USERNAME=$(bashio::config 'mqtt_username')
 MQTT_PASSWORD=$(bashio::config 'mqtt_password')
-ALWAYS_REPORT_SOLAR=$(bashio::config 'always_report_solar_temp')
-
-bashio::log.info "Serial port:        ${SERIAL_PORT}"
-bashio::log.info "Log level:          ${LOG_LEVEL}"
-bashio::log.info "MQTT enabled:       ${MQTT_ENABLED}"
-bashio::log.info "Always solar temp:  ${ALWAYS_REPORT_SOLAR}"
-
-# ---------------------------------------------------------------------------
-# MQTT solar temp binding — applied before controller starts
-# ---------------------------------------------------------------------------
-MQTT_BINDINGS="/app/njspc/web/bindings/mqtt.json"
-if [ "${ALWAYS_REPORT_SOLAR}" = "true" ]; then
-    tmp=$(mktemp)
-    if jq '(.context[] | select(type == "object") | .triggers[]? | select(.topic == "state/temps/solar")) |= del(.filter)' \
-        "${MQTT_BINDINGS}" > "${tmp}"; then
-        mv "${tmp}" "${MQTT_BINDINGS}"
-        bashio::log.info "Solar temp: always report via MQTT (filter removed)"
-    else
-        rm -f "${tmp}"
-        bashio::log.error "Failed to patch mqtt.json for always_report_solar_temp"
-    fi
-else
-    tmp=$(mktemp)
-    if jq '(.context[] | select(type == "object") | .triggers[]? | select(.topic == "state/temps/solar")) |= (if has("filter") then . else .filter = "@bind=typeof data.solar !== '\''undefined'\'';" end)' \
-        "${MQTT_BINDINGS}" > "${tmp}"; then
-        mv "${tmp}" "${MQTT_BINDINGS}"
-        bashio::log.info "Solar temp: only report when pumps active (upstream default)"
-    else
-        rm -f "${tmp}"
-        bashio::log.error "Failed to restore mqtt.json solar filter"
-    fi
-fi
+bashio::log.info "Serial port:  ${SERIAL_PORT}"
+bashio::log.info "Log level:    ${LOG_LEVEL}"
+bashio::log.info "MQTT enabled: ${MQTT_ENABLED}"
 
 # ---------------------------------------------------------------------------
 # njspc: config stored in /share/pool-controller/njspc/ (visible in HA file editor)
