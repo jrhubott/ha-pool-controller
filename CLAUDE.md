@@ -76,9 +76,12 @@ git diff > ../pool-controller/patches/001-my-fix.patch
 | `pool-controller/config.yaml` | Add-on metadata, ingress config, port mappings, options schema |
 | `pool-controller/build.yaml` | Maps amd64/aarch64 to HA Debian base images |
 | `pool-controller/Dockerfile` | 3-stage build |
+| `pool-controller/DOCS.md` | User-facing documentation shown in the HA add-on UI |
 | `rootfs/etc/s6-overlay/scripts/init-njspc.sh` | Reads HA options, patches njspc config.json |
 | `rootfs/etc/s6-overlay/s6-rc.d/*/run` | s6 service entrypoints |
 | `pool-controller/patches/` | Optional njspc source patches |
+
+When changing add-on configuration (options in `config.yaml`, port mappings, persistent data layout, or init script behaviour), always update `pool-controller/DOCS.md` to reflect the change.
 
 ### HA add-on specifics
 
