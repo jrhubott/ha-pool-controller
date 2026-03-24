@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.19
+
+- Suppress spurious "Connection refused" log output during dashPanel startup wait
+- Move NJSPC_REF and DASHPANEL_TAG ARGs to global Dockerfile section
+
 ## 1.0.18
 
 - Fix dashPanel WebSocket error on startup: dashPanel now waits for the controller
