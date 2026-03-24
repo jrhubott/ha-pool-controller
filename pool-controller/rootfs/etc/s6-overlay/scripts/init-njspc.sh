@@ -41,7 +41,7 @@ bashio::log.info "Always solar temp:  ${ALWAYS_REPORT_SOLAR}"
 MQTT_BINDINGS="/app/njspc/web/bindings/mqtt.json"
 if [ "${ALWAYS_REPORT_SOLAR}" = "true" ]; then
     tmp=$(mktemp)
-    if jq '(.context[] | .triggers[]? | select(.topic == "state/temps/solar")) |= del(.filter)' \
+    if jq '(.context[] | select(type == "object") | .triggers[]? | select(.topic == "state/temps/solar")) |= del(.filter)' \
         "${MQTT_BINDINGS}" > "${tmp}"; then
         mv "${tmp}" "${MQTT_BINDINGS}"
         bashio::log.info "Solar temp: always report via MQTT (filter removed)"
@@ -51,7 +51,7 @@ if [ "${ALWAYS_REPORT_SOLAR}" = "true" ]; then
     fi
 else
     tmp=$(mktemp)
-    if jq '(.context[] | .triggers[]? | select(.topic == "state/temps/solar")) |= (if has("filter") then . else .filter = "@bind=typeof data.solar !== '\''undefined'\'';" end)' \
+    if jq '(.context[] | select(type == "object") | .triggers[]? | select(.topic == "state/temps/solar")) |= (if has("filter") then . else .filter = "@bind=typeof data.solar !== '\''undefined'\'';" end)' \
         "${MQTT_BINDINGS}" > "${tmp}"; then
         mv "${tmp}" "${MQTT_BINDINGS}"
         bashio::log.info "Solar temp: only report when pumps active (upstream default)"

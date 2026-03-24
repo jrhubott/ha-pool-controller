@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.23
+
+- Fix mqtt.json solar temp patch: add select(type == "object") to skip string
+  elements in context array, resolving jq "Cannot index string with string" error
+
 ## 1.0.22
 
 - Add "Always Report Solar Temperature" config option (default: on) — replaces
