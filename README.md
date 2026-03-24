@@ -9,7 +9,7 @@ into a single, self-contained add-on for controlling Pentair pool equipment via 
 
 - Controls Pentair pool equipment (IntelliCenter, IntelliTouch, EasyTouch, and more)
 - Embeds the dashPanel web UI directly in the Home Assistant sidebar
-- Exposes the njspc REST API and Socket.IO on port 4200 for external integrations
+- Optionally exposes the njspc REST API and Socket.IO on port 4200 for external integrations (disabled by default — enable in the add-on's Network configuration)
 - Configures the RS-485 serial port via the standard HA add-on UI
 
 ## Prerequisites
@@ -36,8 +36,27 @@ After installation, open the add-on's **Configuration** tab:
 |--------|-------------|
 | Serial Port | Select the RS-485 adapter device (e.g. `/dev/ttyUSB0`) |
 | Log Level | Verbosity: `error` / `warn` / `info` / `debug` / `silly` |
+| MQTT | Enable/disable MQTT integration and configure broker connection |
+
+### Network configuration
+
+The njspc REST API (port 4200) is **disabled by default**. To expose it on your local network for external integrations:
+
+1. Open the add-on's **Configuration** tab
+2. Under **Network**, set the host port for `4200/tcp` to `4200` (or any port you prefer)
+3. Clear the field to disable it again
 
 Save, then start the add-on. The **Pool** panel will appear in the HA sidebar.
+
+### Persistent files
+
+User-editable config files are stored in `/share/pool-controller/` (accessible via the HA file editor):
+
+| File | Purpose |
+|------|---------|
+| `njspc/config.json` | njspc main configuration (serial, MQTT, web server) |
+| `njspc/data/poolConfig.json` | Pool equipment config (circuits, pumps, schedules) |
+| `dashpanel/config.json` | dashPanel UI configuration |
 
 ## Building locally
 

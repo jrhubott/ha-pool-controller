@@ -38,7 +38,7 @@ Both services run inside one Docker container managed by **s6-overlay** (the ini
 - **njspc-dashpanel** (longrun): dashPanel web UI, listens on port 5150, connects to the controller on `localhost:4200`
 - **init-njspc** (oneshot): runs first, bridges HA add-on options → njspc `config.json`
 
-The dashPanel is the ingress entry point (HA sidebar, port 5150) — it is **not** exposed on the host network, only accessible through HA's ingress proxy. The controller API is exposed on host port 4200 for external integrations (e.g., MQTT, direct REST calls).
+The dashPanel is the ingress entry point (HA sidebar, port 5150) — it is **not** exposed on the host network, only accessible through HA's ingress proxy. The controller API (port 4200) defaults to disabled; users opt-in via the add-on's Network configuration in the HA UI.
 
 ### Dockerfile: 3-stage build
 
@@ -50,7 +50,12 @@ The dashPanel is the ingress entry point (HA sidebar, port 5150) — it is **not
 
 HA add-on options (set in the HA UI) → `/data/options.json` → read by `bashio::config` in `init-njspc.sh` → patched into `/data/njspc/config.json` via `jq` on every container start.
 
-Persistent data lives in `/data/njspc/` and `/data/dashpanel/` (HA auto-persists `/data/` across restarts). The init script symlinks these into `/app/njspc/` and `/app/dashpanel/` so each process finds its config/logs at the expected paths.
+Persistent data is split across two HA-managed volumes:
+
+- `/share/pool-controller/` — user-editable via the HA file editor: `njspc/config.json`, `dashpanel/config.json`, and `njspc/data/` (contains `poolConfig.json` with equipment config)
+- `/data/` — private add-on storage: `njspc/logs/`, `njspc/backups/`, `dashpanel/logs/`, `dashpanel/outQueues/`
+
+The init script symlinks these into `/app/njspc/` and `/app/dashpanel/` so each process finds its config/data at the expected paths.
 
 ### Patch support
 
@@ -82,3 +87,5 @@ git diff > ../pool-controller/patches/001-my-fix.patch
 - `device(subsystem=tty)` schema type — renders a serial device dropdown in the HA config UI
 - `uart: true` — grants container access to serial/UART devices
 - `bashio` — bash helper library pre-installed in all HA base images; use `bashio::config 'key'` to read options, `bashio::log.info` for logging
+- `ports` in `config.yaml` are static Docker mappings applied by the Supervisor before the container starts — they **cannot** be toggled dynamically via `options`. Setting a port default to `null` makes it opt-in; users enable/disable in the add-on's Network configuration UI
+- njspc's InfluxDB integration uses binding templates in `web/bindings/influxDB.json` (inside the container at `/app/njspc/web/bindings/`). Bindings use `@bind=data.<field>;` syntax resolved via `eval()`. If equipment doesn't report a field, the binding fails and that measurement is skipped. Fix via a patch file or custom bindings file (`web/bindings/custom/`)
