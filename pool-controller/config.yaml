@@ -1,6 +1,6 @@
 name: "Pool Controller"
 description: "Pentair pool equipment controller using nodejs-poolController with dashPanel UI"
-version: "1.0.13"
+version: "1.0.14"
 slug: pool-controller
 url: "https://github.com/jrhubott/ha-pool-controller"
 arch:
@@ -14,9 +14,9 @@ ingress_stream: true
 panel_icon: "mdi:pool"
 panel_title: "Pool"
 ports:
-  4200/tcp: 4200
+  4200/tcp: null
 ports_description:
-  4200/tcp: "njspc REST API / Socket.IO"
+  4200/tcp: "njspc REST API / Socket.IO (default port: 4200, clear to disable)"
 map:
   - share:rw
 uart: true

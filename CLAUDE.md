@@ -38,7 +38,7 @@ Both services run inside one Docker container managed by **s6-overlay** (the ini
 - **njspc-dashpanel** (longrun): dashPanel web UI, listens on port 5150, connects to the controller on `localhost:4200`
 - **init-njspc** (oneshot): runs first, bridges HA add-on options → njspc `config.json`
 
-The dashPanel is the ingress entry point (HA sidebar, port 5150). The controller API is also exposed on host port 4200 for external integrations.
+The dashPanel is the ingress entry point (HA sidebar, port 5150) — it is **not** exposed on the host network, only accessible through HA's ingress proxy. The controller API is exposed on host port 4200 for external integrations (e.g., MQTT, direct REST calls).
 
 ### Dockerfile: 3-stage build
 
