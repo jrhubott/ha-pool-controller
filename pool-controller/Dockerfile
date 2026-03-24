@@ -1,8 +1,10 @@
 # BUILD_FROM must be declared globally (before any FROM) to be injectable
 # by the HA Supervisor build system
 ARG BUILD_FROM
+# Clone the controller repo at a pinned version (tag like v8.4.0 or branch like main)
+ARG NJSPC_REF=v8.4.0
+# Use the latesrt version of the dashpanel as it doesn't have meaninfull tags
 ARG DASHPANEL_TAG=latest
-
 # =============================================================================
 # Stage 1: Build nodejs-poolController from source
 # =============================================================================
@@ -18,8 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /build
 
-# Clone the controller repo at a pinned version (tag like v8.4.0 or branch like main)
-ARG NJSPC_REF=v8.4.0
+
 RUN git clone --depth 1 --branch "${NJSPC_REF}" \
     https://github.com/tagyoureit/nodejs-poolController.git .
 
