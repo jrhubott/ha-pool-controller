@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.21
+
+- Document patch system and included patches in DOCS.md and README.md
+
 ## 1.0.20
 
 - Fix Dockerfile build failure: re-declare NJSPC_REF inside controller-build stage

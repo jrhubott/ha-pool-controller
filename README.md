@@ -168,6 +168,18 @@ git diff > ../ha-pool-controller/pool-controller/patches/001-my-fix.patch
 Patches are named numerically (`001-`, `002-`, etc.) to control application order.
 Any `.patch` files in `pool-controller/patches/` are automatically applied during the build.
 
+### Included patches
+
+#### 001-always-report-solar-mqtt.patch
+
+Removes the `typeof data.solar !== 'undefined'` filter from the MQTT solar temperature binding
+so that solar temperature is always published to MQTT even when the pumps are not running.
+
+By default, upstream njspc only publishes solar temperature when the pumps are active. This patch
+enables automations that continuously compare solar panel temperature to pool water temperature
+and automatically start pumps when the temperature difference is large enough to benefit from
+solar heating.
+
 ## Repository structure
 
 ```

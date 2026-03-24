@@ -83,3 +83,18 @@ Home Assistant file editor:
 | `dashpanel/config.json` | dashPanel UI configuration |
 
 Logs and backups are stored in private add-on storage (`/data/`) and persist across restarts.
+
+## Included Patches
+
+This add-on ships patches that are applied to the njspc source at build time to fix or extend
+upstream behaviour. Patches live in `pool-controller/patches/` in the repository.
+
+### 001-always-report-solar-mqtt.patch
+
+Removes the `typeof data.solar !== 'undefined'` filter from the MQTT solar temperature binding
+so that solar temperature is always published to MQTT even when the pumps are not running.
+
+By default, upstream njspc only publishes solar temperature when the pumps are active. This patch
+enables automations that continuously compare solar panel temperature to pool water temperature
+and automatically start pumps when the temperature difference is large enough to benefit from
+solar heating.
