@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.20
+
+- Fix Dockerfile build failure: re-declare NJSPC_REF inside controller-build stage
+  (global ARGs before FROM are not available inside stages without re-declaration)
+
 ## 1.0.19
 
 - Suppress spurious "Connection refused" log output during dashPanel startup wait

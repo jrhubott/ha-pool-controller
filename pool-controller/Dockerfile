@@ -10,6 +10,8 @@ ARG DASHPANEL_TAG=latest
 # =============================================================================
 FROM node:20-bookworm-slim AS controller-build
 
+ARG NJSPC_REF
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     git \
