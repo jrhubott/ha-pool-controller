@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.18
+
+- Fix dashPanel WebSocket error on startup: dashPanel now waits for the controller
+  to be listening on port 4200 before starting, eliminating the race condition
+
 ## 1.0.17
 
 - Add optional host network exposure for dashPanel UI on port 5150 (disabled by default;
