@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.15
+
+- Expose poolConfig.json (circuits, pumps, schedules, equipment) in /share/pool-controller/njspc/data/
+- Previously persisted in private /data/njspc/data/ (not visible in HA file editor); now
+  symlinked from /share/ so it is accessible and editable via the HA file editor
+- One-time migration moves existing poolConfig.json from /data/ to /share/ on upgrade
+
+## 1.0.14
+
+- Default port 4200 (njspc REST API) to disabled; enable in the add-on Network configuration
+  by setting the host port to 4200 (clear the field to disable again)
+
 ## 1.0.13
 
 - Fix pool configuration (alias, owner, location, circuits, pumps, schedules) lost on restart

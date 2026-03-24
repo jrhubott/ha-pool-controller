@@ -14,8 +14,8 @@ bashio::log.info "Initialising nodejs-poolController..."
 # via the HA file editor. Used for config.json files users may want to edit.
 # /data is private add-on storage — used for logs, backups, runtime data.
 # ---------------------------------------------------------------------------
-mkdir -p /share/pool-controller/njspc /share/pool-controller/dashpanel
-mkdir -p /data/njspc/data /data/njspc/logs /data/njspc/backups
+mkdir -p /share/pool-controller/njspc/data /share/pool-controller/dashpanel
+mkdir -p /data/njspc/logs /data/njspc/backups
 mkdir -p /data/dashpanel/logs /data/dashpanel/backups /data/dashpanel/outQueues
 
 # ---------------------------------------------------------------------------
@@ -36,6 +36,12 @@ bashio::log.info "MQTT enabled: ${MQTT_ENABLED}"
 # ---------------------------------------------------------------------------
 # njspc: config stored in /share/pool-controller/njspc/ (visible in HA file editor)
 # ---------------------------------------------------------------------------
+# Migrate poolConfig.json from private /data/ to /share/ (one-time, v1.0.14 -> v1.0.15)
+if [ -f /data/njspc/data/poolConfig.json ] && [ ! -f /share/pool-controller/njspc/data/poolConfig.json ]; then
+    bashio::log.info "Migrating poolConfig.json to /share/pool-controller/njspc/data/"
+    mv /data/njspc/data/poolConfig.json /share/pool-controller/njspc/data/poolConfig.json
+fi
+
 if [ ! -f /share/pool-controller/njspc/config.json ]; then
     bashio::log.info "Creating default njspc config in /share/pool-controller/njspc/config.json"
     cp /app/njspc/defaultConfig.json /share/pool-controller/njspc/config.json
@@ -89,7 +95,7 @@ bashio::log.info "MQTT config applied (web.interfaces.mqtt)"
 
 # Symlink config and runtime dirs into the app directory
 ln -sf /share/pool-controller/njspc/config.json /app/njspc/config.json
-rm -rf /app/njspc/data && ln -sf /data/njspc/data /app/njspc/data
+rm -rf /app/njspc/data && ln -sf /share/pool-controller/njspc/data /app/njspc/data
 rm -rf /app/njspc/logs && ln -sf /data/njspc/logs /app/njspc/logs
 rm -rf /app/njspc/backups && ln -sf /data/njspc/backups /app/njspc/backups
 
