@@ -34,6 +34,7 @@ To publish pool state to an MQTT broker, enable MQTT and provide the broker conn
 
 | Option | Description |
 |--------|-------------|
+| `always_report_solar_temp` | Publish solar temperature via MQTT even when pumps are off (default: enabled) |
 | `mqtt_enabled` | Enable or disable MQTT publishing |
 | `mqtt_host` | Broker hostname or IP address |
 | `mqtt_port` | Broker port (default: 1883) |
@@ -84,17 +85,11 @@ Home Assistant file editor:
 
 Logs and backups are stored in private add-on storage (`/data/`) and persist across restarts.
 
-## Included Patches
+### Always Report Solar Temperature
 
-This add-on ships patches that are applied to the njspc source at build time to fix or extend
-upstream behaviour. Patches live in `pool-controller/patches/` in the repository.
+When enabled (default), solar panel temperature is published to MQTT continuously — even
+when the pumps are not running. This is needed for automations that compare solar panel
+temperature to pool water temperature and start the pumps when solar heating is available.
 
-### 001-always-report-solar-mqtt.patch
+When disabled, solar temperature is only published while the pumps are active (upstream default).
 
-Removes the `typeof data.solar !== 'undefined'` filter from the MQTT solar temperature binding
-so that solar temperature is always published to MQTT even when the pumps are not running.
-
-By default, upstream njspc only publishes solar temperature when the pumps are active. This patch
-enables automations that continuously compare solar panel temperature to pool water temperature
-and automatically start pumps when the temperature difference is large enough to benefit from
-solar heating.

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.22
+
+- Add "Always Report Solar Temperature" config option (default: on) — replaces
+  the build-time patch with a runtime toggle; solar temp is now published via MQTT
+  even when pumps are off, controllable from the add-on configuration screen
+- Remove 001-always-report-solar-mqtt.patch (behavior now handled in init-njspc.sh)
+
 ## 1.0.21
 
 - Document patch system and included patches in DOCS.md and README.md

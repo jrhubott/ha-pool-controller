@@ -37,6 +37,7 @@ After installation, open the add-on's **Configuration** tab:
 | Serial Port | Select the RS-485 adapter device (e.g. `/dev/ttyUSB0`) |
 | Log Level | Verbosity: `error` / `warn` / `info` / `debug` / `silly` |
 | MQTT | Enable/disable MQTT integration and configure broker connection |
+| Always Report Solar Temp | Publish solar temperature via MQTT even when pumps are off (default: on) |
 
 ### Network configuration
 
@@ -170,15 +171,8 @@ Any `.patch` files in `pool-controller/patches/` are automatically applied durin
 
 ### Included patches
 
-#### 001-always-report-solar-mqtt.patch
-
-Removes the `typeof data.solar !== 'undefined'` filter from the MQTT solar temperature binding
-so that solar temperature is always published to MQTT even when the pumps are not running.
-
-By default, upstream njspc only publishes solar temperature when the pumps are active. This patch
-enables automations that continuously compare solar panel temperature to pool water temperature
-and automatically start pumps when the temperature difference is large enough to benefit from
-solar heating.
+No patches are currently shipped. The solar temperature MQTT behavior is now controlled at
+runtime via the **Always Report Solar Temperature** add-on option instead.
 
 ## Repository structure
 

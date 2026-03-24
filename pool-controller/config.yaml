@@ -1,6 +1,6 @@
 name: "Pool Controller"
 description: "Pentair pool equipment controller using nodejs-poolController with dashPanel UI"
-version: "1.0.21"
+version: "1.0.22"
 slug: pool-controller
 url: "https://github.com/jrhubott/ha-pool-controller"
 arch:
@@ -30,6 +30,7 @@ options:
   mqtt_port: 1883
   mqtt_username: ""
   mqtt_password: ""
+  always_report_solar_temp: true
 schema:
   serial_port: device(subsystem=tty)
   log_level: list(error|warn|info|debug|silly)
@@ -38,3 +39,4 @@ schema:
   mqtt_port: int?
   mqtt_username: str?
   mqtt_password: password?
+  always_report_solar_temp: bool
