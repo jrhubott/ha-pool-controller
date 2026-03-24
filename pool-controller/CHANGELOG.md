@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.0.24
+nodejs-poolController: v8.4.0 | dashPanel: latest
 
 - Remove always_report_solar_temp option: investigation confirmed data.solar is
   never undefined on systems with a solar heater configured, so the upstream MQTT

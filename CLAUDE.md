@@ -33,10 +33,18 @@ There are no automated tests in this repository. Validation is done by building 
 When the user asks for a release, do all of the following automatically:
 
 1. Bump the patch version in `pool-controller/config.yaml`
-2. Add a changelog entry in `pool-controller/CHANGELOG.md` summarizing commits since the last version
+2. Add a changelog entry in `pool-controller/CHANGELOG.md` — include the upstream component versions from `pool-controller/Dockerfile` (`NJSPC_REF` and `DASHPANEL_TAG`) plus a summary of commits since the last version
 3. Commit: `git commit -m "Bump to <version>"`
 4. Tag: `git tag <version>` (e.g. `git tag 1.0.25`)
 5. Push commit and tag: `git push && git push --tags`
+
+Example changelog entry format:
+```
+## 1.0.25
+nodejs-poolController: v8.4.0 | dashPanel: latest
+
+- Description of change
+```
 
 ## Architecture
 
