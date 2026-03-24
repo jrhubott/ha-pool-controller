@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.16
+
+- Update DOCS.md: add MQTT configuration section, document port 4200 as opt-in,
+  update persisted data section to show /share/ layout with poolConfig.json
+
 ## 1.0.15
 
 - Expose poolConfig.json (circuits, pumps, schedules, equipment) in /share/pool-controller/njspc/data/
