@@ -3,6 +3,6 @@ bashio::log.info "Starting nodejs-poolController dashPanel..."
 cd /app/dashpanel || bashio::exit.nok "Could not change to /app/dashpanel"
 
 bashio::log.info "Waiting for njspc-controller on port 4200..."
-while ! echo > /dev/tcp/localhost/4200 2>/dev/null; do sleep 1; done
+while ! (echo > /dev/tcp/localhost/4200) 2>/dev/null; do sleep 1; done
 
 exec node dist/app.js
