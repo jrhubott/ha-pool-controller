@@ -40,16 +40,23 @@ To publish pool state to an MQTT broker, enable MQTT and provide the broker conn
 | `mqtt_username` | Broker username (optional) |
 | `mqtt_password` | Broker password (optional) |
 
-### Network (port 4200)
+### Network
 
-The njspc REST API and Socket.IO endpoint are **not exposed** on the local network by default.
-To enable access for external integrations (MQTT clients, SmartThings, direct REST calls):
+Both the dashPanel UI and the njspc REST API are **not exposed** on the local network by default.
+They are accessible through HA's ingress proxy (sidebar) without any port configuration.
 
-1. Open the add-on's **Configuration** tab
-2. Under **Network**, set the host port for `4200/tcp` to `4200` (or any preferred port)
-3. Save and restart the add-on
+To enable direct local network access, open the add-on's **Configuration** tab, go to **Network**,
+and set the desired host port(s):
 
-The API will then be available at `http://<ha-host>:4200`. Clear the field to disable it again.
+| Port | Purpose | Suggested host port |
+|------|---------|-------------------|
+| `4200/tcp` | njspc REST API / Socket.IO — for external integrations (MQTT, SmartThings, REST) | 4200 |
+| `5150/tcp` | dashPanel UI — for direct browser access without HA ingress | 5150 |
+
+Save and restart the add-on. Clear a field to disable that port again.
+
+- API: `http://<ha-host>:4200`
+- dashPanel: `http://<ha-host>:5150`
 
 ## Accessing the UI
 

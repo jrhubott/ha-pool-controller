@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.17
+
+- Add optional host network exposure for dashPanel UI on port 5150 (disabled by default;
+  enable in the add-on Network configuration)
+
 ## 1.0.16
 
 - Update DOCS.md: add MQTT configuration section, document port 4200 as opt-in,
