@@ -28,6 +28,16 @@ docker build \
 
 There are no automated tests in this repository. Validation is done by building the Docker image and testing against a live HA instance.
 
+## Releasing a version
+
+When the user asks for a release, do all of the following automatically:
+
+1. Bump the patch version in `pool-controller/config.yaml`
+2. Add a changelog entry in `pool-controller/CHANGELOG.md` summarizing commits since the last version
+3. Commit: `git commit -m "Bump to <version>"`
+4. Tag: `git tag <version>` (e.g. `git tag 1.0.25`)
+5. Push commit and tag: `git push && git push --tags`
+
 ## Architecture
 
 ### Single-container design
