@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.25
+nodejs-poolController: v8.4.0 | dashPanel: latest
+
+- Add patch to debounce chlorinator "Communication Lost" status: status is only
+  reported after 10 minutes of sustained comms failure, preventing spurious
+  alerts from brief RS-485 glitches
+
 ## 1.0.24
 nodejs-poolController: v8.4.0 | dashPanel: latest
 

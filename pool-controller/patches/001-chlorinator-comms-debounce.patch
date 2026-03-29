@@ -1,0 +1,37 @@
+diff --git a/controller/State.ts b/controller/State.ts
+index c5bd4b5d..5d4df13d 100644
+--- a/controller/State.ts
++++ b/controller/State.ts
+@@ -2228,6 +2228,8 @@ export class ChlorinatorState extends EqState {
+     // RG - Fixed with "false" persistence flag. 2/10/2020
+     public get lastComm(): number { return this.data.lastComm; }
+     public set lastComm(val: number) { this.setDataVal('lastComm', val, false); }
++    public get commLostStart(): number { return this.data.commLostStart || 0; }
++    public set commLostStart(val: number) { this.setDataVal('commLostStart', val, false); }
+     public get id(): number { return this.data.id; }
+     public set id(val: number) { this.data.id = val; }
+     public get isActive(): boolean { return this.data.isActive; }
+diff --git a/controller/comms/messages/status/ChlorinatorStateMessage.ts b/controller/comms/messages/status/ChlorinatorStateMessage.ts
+index 91bcc516..12c3d2fe 100755
+--- a/controller/comms/messages/status/ChlorinatorStateMessage.ts
++++ b/controller/comms/messages/status/ChlorinatorStateMessage.ts
+@@ -38,8 +38,9 @@ export class ChlorinatorStateMessage {
+                 if (typeof cstate.lastComm === 'undefined') cstate.lastComm = new Date(1970, 0, 1, 0, 0, 0, 0).getTime();
+                 // RG: I was getting some time deltas of 25-30s and bumped this up
+                 else if (cstate.lastComm + (30 * 1000) < new Date().getTime()) {
+-                    // We have not talked to the chlorinator in 30 seconds so we have lost communication.
+-                    cstate.status = 128;
++                    // We have not talked to the chlorinator in 30 seconds; start debounce timer.
++                    if (cstate.commLostStart === 0) cstate.commLostStart = new Date().getTime();
++                    if (new Date().getTime() - cstate.commLostStart >= 600000) cstate.status = 128;
+                 }
+                 // chlor = sys.chlorinators.getItemById(msg.dest - 79, true); chlor is retrieved above; don't get in incorrectly here.
+                 chlor.address = msg.dest; // Theoretically, this will always be 80.
+@@ -49,6 +50,7 @@ export class ChlorinatorStateMessage {
+                 // Response message from chlorinator.  If the chlorinator is speaking to us then we need to hear it and clear the status when
+                 // the previous status was no comms.
+                 cstate.lastComm = new Date().getTime();
++                cstate.commLostStart = 0;
+                 if (cstate.status === 128) cstate.status = 0;
+             }
+             cstate.body = chlor.body;

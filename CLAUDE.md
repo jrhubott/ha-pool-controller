@@ -8,21 +8,23 @@ A Home Assistant add-on repository that packages [nodejs-poolController](https:/
 
 ## Build commands
 
+Use `podman` (not docker) for local builds. On an arm64 Mac, use the `aarch64` base image — the `amd64` base will fail with an architecture mismatch.
+
 ```bash
-# Build for amd64 (local dev/testing)
-docker build \
-  --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm \
+# Build for aarch64 (local dev/testing on arm64 Mac)
+podman build \
+  --build-arg BUILD_FROM=ghcr.io/home-assistant/aarch64-base-debian:bookworm \
   --build-arg NJSPC_REF=v8.4.0 \
   --build-arg DASHPANEL_TAG=latest \
   -t pool-controller:local \
   pool-controller/
 
-# Build for aarch64
-docker build \
-  --build-arg BUILD_FROM=ghcr.io/home-assistant/aarch64-base-debian:bookworm \
+# Build for amd64 (CI / x86 hosts only)
+podman build \
+  --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm \
   --build-arg NJSPC_REF=v8.4.0 \
   --build-arg DASHPANEL_TAG=latest \
-  -t pool-controller:local-arm \
+  -t pool-controller:local-amd64 \
   pool-controller/
 ```
 
@@ -79,13 +81,42 @@ The init script symlinks these into `/app/njspc/` and `/app/dashpanel/` so each 
 
 Drop `.patch` files into `pool-controller/patches/`. They are applied with `git apply` after cloning the njspc source in Stage 1. Name them numerically (`001-fix.patch`, `002-feature.patch`) to control application order.
 
-To create a patch:
+**Patch development workflow:**
+
+Keep a clone of upstream njspc as a sibling directory for patch development:
 ```bash
+# One-time setup (sibling of this repo)
+cd /Users/jrhubott/Repositories
 git clone https://github.com/tagyoureit/nodejs-poolController.git
 cd nodejs-poolController
-# make changes
-git diff > ../pool-controller/patches/001-my-fix.patch
+git checkout v8.4.0   # match NJSPC_REF in Dockerfile
 ```
+
+Edit files in that clone, then generate the patch:
+```bash
+cd /Users/jrhubott/Repositories/nodejs-poolController
+git diff > /Users/jrhubott/Repositories/ha-pool-controller/pool-controller/patches/001-my-fix.patch
+```
+
+Verify and build:
+```bash
+# Verify patch applies cleanly to a fresh checkout
+cd /tmp && git clone /Users/jrhubott/Repositories/nodejs-poolController njspc-test
+cd njspc-test && git checkout v8.4.0
+git apply --check /Users/jrhubott/Repositories/ha-pool-controller/pool-controller/patches/001-my-fix.patch
+rm -rf /tmp/njspc-test
+
+# Build to confirm patch applies and TypeScript compiles
+cd /Users/jrhubott/Repositories/ha-pool-controller
+podman build \
+  --build-arg BUILD_FROM=ghcr.io/home-assistant/aarch64-base-debian:bookworm \
+  --build-arg NJSPC_REF=v8.4.0 \
+  --build-arg DASHPANEL_TAG=latest \
+  -t pool-controller:local \
+  pool-controller/
+```
+
+When updating `NJSPC_REF` to a new version, regenerate all patches against the new tag.
 
 ### Key files
 
