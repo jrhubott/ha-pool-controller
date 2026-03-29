@@ -59,7 +59,7 @@ fi
 if [ -n "${LOG_LEVEL}" ]; then
     tmp=$(mktemp)
     jq --arg level "${LOG_LEVEL}" \
-        '.log.app = $level' \
+        'if (.log.app | type) == "string" then .log.app = {enabled: true, level: $level, captureForReplay: false, logToFile: false} else .log.app.level = $level end' \
         /share/pool-controller/njspc/config.json > "${tmp}" && mv "${tmp}" /share/pool-controller/njspc/config.json
     bashio::log.info "Set njspc log level to ${LOG_LEVEL}"
 fi

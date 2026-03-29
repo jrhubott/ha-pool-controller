@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.26
+nodejs-poolController: v8.4.0 | dashPanel: latest
+
+- Fix TypeError when setting application log level: init script was overwriting
+  the `.log.app` object with a plain string, causing "Cannot create property
+  'enabled' on string 'debug'" when changing log level in the dashPanel UI.
+  Also repairs already-corrupted configs on next restart.
+
 ## 1.0.25
 nodejs-poolController: v8.4.0 | dashPanel: latest
 
